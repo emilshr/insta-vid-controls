@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: Unable to determine type at runtime */
 import browser from "webextension-polyfill";
 
 /**
@@ -54,10 +55,7 @@ class InstagramVideoController {
         if (newValue === this.isEnabled) return;
 
         this.isEnabled = newValue;
-        console.log(
-          "[InstaControl] Extension enabled state changed to:",
-          newValue
-        );
+        console.log("[InstaControl] Extension enabled state changed to:", newValue);
 
         if (this.isEnabled) {
           document.documentElement.classList.add("insta-control-active");
@@ -83,7 +81,7 @@ class InstagramVideoController {
     videos.forEach((video) => {
       // Remove custom control bar
       const bar = this.customControls.get(video);
-      if (bar && bar.parentElement) {
+      if (bar?.parentElement) {
         bar.parentElement.removeChild(bar);
       }
       this.customControls.delete(video);
@@ -94,9 +92,7 @@ class InstagramVideoController {
         const rotateBtn = container.querySelector(".insta-control-rotate-btn");
         if (rotateBtn) rotateBtn.parentElement?.removeChild(rotateBtn);
 
-        const rotateMenu = container.querySelector(
-          ".insta-control-rotate-menu"
-        );
+        const rotateMenu = container.querySelector(".insta-control-rotate-menu");
         if (rotateMenu) rotateMenu.parentElement?.removeChild(rotateMenu);
 
         // Reset video classes and styles
@@ -203,15 +199,9 @@ class InstagramVideoController {
       }
 
       // Check for common story navigation elements in the same container
-      if (
-        parent.querySelector('button[aria-label="Close"]') ||
-        parent.querySelector('button[aria-label="Story"]')
-      ) {
+      if (parent.querySelector('button[aria-label="Close"]') || parent.querySelector('button[aria-label="Story"]')) {
         // Double check if this is a dialog (Stories are usually in a modal/dialog)
-        if (
-          parent.getAttribute("role") === "dialog" ||
-          parent.tagName === "SECTION"
-        ) {
+        if (parent.getAttribute("role") === "dialog" || parent.tagName === "SECTION") {
           return true;
         }
       }
@@ -240,7 +230,7 @@ class InstagramVideoController {
           video.pause();
         }
       },
-      true
+      true,
     ); // Capture phase to get it before ANY bubble listeners
 
     console.log("[InstaControl] Native click suppressed");
@@ -249,9 +239,7 @@ class InstagramVideoController {
   private addRotationButton(video: HTMLVideoElement): void {
     const container = this.findVideoContainer(video);
     if (!container) {
-      console.warn(
-        "[InstaControl] Could not find container for rotation button"
-      );
+      console.warn("[InstaControl] Could not find container for rotation button");
       return;
     }
 
@@ -392,21 +380,14 @@ class InstagramVideoController {
 
         rotateMenu.style.setProperty("position", "fixed", "important");
         rotateMenu.style.setProperty("top", `${topPosition}px`, "important");
-        rotateMenu.style.setProperty(
-          "right",
-          `${rightPosition}px`,
-          "important"
-        );
+        rotateMenu.style.setProperty("right", `${rightPosition}px`, "important");
         rotateMenu.style.setProperty("left", "auto", "important");
 
-        console.log(
-          "[InstaControl] Menu opened, moved to body, positioned at:",
-          {
-            top: `${topPosition}px`,
-            right: `${rightPosition}px`,
-            btnRect: btnRect,
-          }
-        );
+        console.log("[InstaControl] Menu opened, moved to body, positioned at:", {
+          top: `${topPosition}px`,
+          right: `${rightPosition}px`,
+          btnRect: btnRect,
+        });
       }
 
       console.log("[InstaControl] Rotation menu toggled:", !isActive);
@@ -515,10 +496,7 @@ class InstagramVideoController {
     bar.appendChild(fsBtn);
 
     // Helper to safely handle interactions
-    const addInteraction = (
-      element: HTMLElement,
-      handler: (e: Event) => void
-    ) => {
+    const addInteraction = (element: HTMLElement, handler: (e: Event) => void) => {
       element.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -590,9 +568,7 @@ class InstagramVideoController {
     const updateTime = () => {
       const current = video.currentTime;
       const duration = video.duration || 0;
-      timeDisplay.textContent = `${formatTime(current)} / ${formatTime(
-        duration
-      )}`;
+      timeDisplay.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
 
       let percent = 0;
       if (duration > 0 && Number.isFinite(duration)) {
@@ -621,8 +597,7 @@ class InstagramVideoController {
       // Guard against hidden element
       if (rect.width === 0) return;
 
-      const clientX =
-        "touches" in e ? e.touches[0].clientX : (e as MouseEvent).clientX;
+      const clientX = "touches" in e ? e.touches[0].clientX : (e as MouseEvent).clientX;
       let pos = (clientX - rect.left) / rect.width;
       pos = Math.max(0, Math.min(1, pos));
 
@@ -669,18 +644,10 @@ class InstagramVideoController {
         // If actual state differs from intent, ONLY restore if it looks like an unwanted reset
         // Unwanted reset usually means volume goes to 0 or muted becomes true unexpectedly
         // But strict enforcement is safer for now
-        if (
-          Math.abs(video.volume - intentVol) > 0.01 ||
-          video.muted !== intentMute
-        ) {
+        if (Math.abs(video.volume - intentVol) > 0.01 || video.muted !== intentMute) {
           // Avoid restoring if the change came from our own slider (which updates intent first)
           // We can solve this by updating intent immediately on slider interaction
-          console.log(
-            "[InstaControl] Restoring volume to",
-            intentVol,
-            "muted:",
-            intentMute
-          );
+          console.log("[InstaControl] Restoring volume to", intentVol, "muted:", intentMute);
           video.volume = intentVol;
           video.muted = intentMute;
         }
