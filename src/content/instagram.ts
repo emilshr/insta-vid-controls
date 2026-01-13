@@ -7,6 +7,7 @@ class InstagramVideoController {
   private processedVideos = new WeakSet<HTMLVideoElement>();
   private observer: MutationObserver | null = null;
   private rotationStates = new WeakMap<HTMLVideoElement, number>();
+  private flipStates = new WeakMap<HTMLVideoElement, boolean>();
   private customControls = new WeakMap<HTMLVideoElement, HTMLElement>();
   // Volume Management
   private intendedVolume = new WeakMap<HTMLVideoElement, number>();
@@ -223,8 +224,7 @@ class InstagramVideoController {
     const menuItems = [
       { label: "↶ Rotate left 90°", degrees: -90 },
       { label: "↷ Rotate right 90°", degrees: 90 },
-      { label: "↶ Rotate left 180°", degrees: -180 },
-      { label: "↷ Rotate right 180°", degrees: 180 },
+      { label: "↔ Flip Horizontally", isFlip: true },
     ];
 
     menuItems.forEach((item) => {
@@ -236,15 +236,20 @@ class InstagramVideoController {
       const handleItemAction = () => {
         console.log("[InstaControl] Menu item clicked:", item.label);
 
-        // Calculate new rotation (relative to current)
-        const currentRotation = this.rotationStates.get(video) || 0;
-        let newRotation = (currentRotation + item.degrees) % 360;
+        if ("isFlip" in item) {
+          const currentFlip = this.flipStates.get(video) || false;
+          this.flipStates.set(video, !currentFlip);
+        } else {
+          // Calculate new rotation (relative to current)
+          const currentRotation = this.rotationStates.get(video) || 0;
+          let newRotation = (currentRotation + (item.degrees || 0)) % 360;
 
-        // Normalize to 0-359 range
-        if (newRotation < 0) newRotation += 360;
+          // Normalize to 0-359 range
+          if (newRotation < 0) newRotation += 360;
+          this.rotationStates.set(video, newRotation);
+        }
 
-        this.rotationStates.set(video, newRotation);
-        this.applyRotation(video, newRotation);
+        this.applyRotation(video, this.rotationStates.get(video) || 0);
 
         // Close menu and move back to container
         rotateMenu.classList.remove("active");
@@ -671,7 +676,9 @@ class InstagramVideoController {
     const container = this.findVideoContainer(video);
     if (!container) return;
 
-    if (degrees === 0) {
+    const isFlipped = this.flipStates.get(video) || false;
+
+    if (degrees === 0 && !isFlipped) {
       // Reset
       video.style.transform = "";
       video.style.width = "";
@@ -706,8 +713,11 @@ class InstagramVideoController {
     video.style.transition = "transform 0.3s ease, margin 0.3s ease";
     video.style.transformOrigin = "center center";
 
-    if (degrees === 180) {
-      video.style.transform = `rotate(180deg)`;
+    const flipTransform = isFlipped ? "scaleX(-1)" : "";
+
+    if (degrees === 180 || degrees === 0) {
+      // 0 if only flipped
+      video.style.transform = `rotate(${degrees}deg) ${flipTransform}`;
       if (!isFullscreen) container.style.height = "";
     } else {
       // 90 or 270 (Landscape)
@@ -728,7 +738,7 @@ class InstagramVideoController {
         container.style.height = `${visualHeight}px`;
       }
 
-      video.style.transform = `rotate(${degrees}deg) scale(${scale})`;
+      video.style.transform = `rotate(${degrees}deg) scale(${scale}) ${flipTransform}`;
     }
   }
 

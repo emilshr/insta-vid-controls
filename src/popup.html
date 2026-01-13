@@ -2,15 +2,40 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./popup.css" />
-    <script type="module" src="./popup.ts"></script>
-    <title>Popup</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>InstaControl</title>
   </head>
   <body>
-    <img src="/icon-with-shadow.svg" />
-    <h1>vite-plugin-web-extension</h1>
-    <p>Template: <code>vanilla-ts</code></p>
+    <div class="container">
+    
+      <div class="content">
+        <h1>InstaControl</h1>
+        <p class="tagline">Pro video player for Instagram</p>
+        
+        <div class="features">
+          <div class="feature-item">
+            <span class="icon">✨</span>
+            <span class="text">Advanced Media Controls</span>
+          </div>
+          <div class="feature-item">
+            <span class="icon">🔄</span>
+            <span class="text">Smart Video Rotation</span>
+          </div>
+          <div class="feature-item">
+            <span class="icon">🎬</span>
+            <span class="text">Full-Screen Immersion</span>
+          </div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <p>Active on Reels & Posts</p>
+      </footer>
+    </div>
+    <script type="module" src="./popup.ts"></script>
   </body>
 </html>
