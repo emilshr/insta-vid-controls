@@ -21,5 +21,23 @@
   "permissions": [
     "tabs",
     "activeTab"
+  ],
+  "{{chrome}}.host_permissions": [
+    "https://www.instagram.com/*"
+  ],
+  "{{firefox}}.permissions": [
+    "tabs",
+    "activeTab",
+    "https://www.instagram.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.instagram.com/*"
+      ],
+      "js": ["src/content/instagram.ts"],
+      "css": ["src/content/styles.css"],
+      "run_at": "document_idle"
+    }
   ]
 }

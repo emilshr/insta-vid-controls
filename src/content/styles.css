@@ -1,0 +1,472 @@
+/* Rotation button styling */
+.insta-control-rotate-btn {
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+  z-index: 2147483647 !important;
+
+  /* Visual styling - smaller size */
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  color: white !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+
+  /* Center the rotation symbol */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* Interaction */
+  transition: all 0.2s ease !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+
+  /* Ensure visibility */
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.insta-control-rotate-btn:hover {
+  background: rgba(0, 0, 0, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  transform: scale(1.1) !important;
+}
+
+.insta-control-rotate-btn:active {
+  transform: scale(0.95) !important;
+}
+
+/* Rotation menu styling */
+.insta-control-rotate-menu {
+  position: absolute !important;
+  background: rgba(0, 0, 0, 0.9) !important;
+  border-radius: 8px !important;
+  padding: 8px !important;
+  min-width: 180px !important;
+  z-index: 2147483647 !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+  display: none !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+
+  /* Ensure menu can receive clicks - very important! */
+  pointer-events: auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+
+  /* Force menu above everything */
+  isolation: isolate !important;
+}
+
+/* Hide rotation UI in fullscreen mode */
+:fullscreen .insta-control-rotate-btn,
+:fullscreen .insta-control-rotate-menu,
+:-webkit-full-screen .insta-control-rotate-btn,
+:-webkit-full-screen .insta-control-rotate-menu,
+:-ms-fullscreen .insta-control-rotate-btn,
+:-ms-fullscreen .insta-control-rotate-menu {
+  display: none !important;
+}
+
+/* When menu is in container (default state) */
+.insta-control-enhanced > .insta-control-rotate-menu {
+  top: 45px !important;
+  right: 0 !important;
+}
+
+/* When menu is moved to body, it uses fixed positioning with JS-set coordinates */
+body > .insta-control-rotate-menu {
+  position: fixed !important;
+  /* top and right are set via JavaScript inline styles - no !important here */
+}
+
+.insta-control-rotate-menu.active {
+  display: flex !important;
+}
+
+.insta-control-rotate-menu-item {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  border: none !important;
+  padding: 10px 12px !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-size: 13px !important;
+  text-align: left !important;
+  transition: all 0.15s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+
+  /* Ensure menu items can receive clicks */
+  pointer-events: auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.insta-control-rotate-menu-item:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  transform: translateX(2px) !important;
+}
+
+.insta-control-rotate-menu-item svg {
+  width: 16px !important;
+  height: 16px !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
+}
+
+/* Hide Instagram's overlays that interfere with native controls */
+/* Instagram uses obfuscated class names, so we use aggressive structural selectors */
+
+/* Mark video containers so we can target Instagram overlays */
+.insta-control-enhanced {
+  position: relative !important;
+}
+
+/* Hide all overlay divs that Instagram adds on top of videos */
+/* Target common Instagram overlay patterns */
+.insta-control-enhanced > div:not(.insta-control-rotate-btn):not(.insta-control-rotate-menu):not(video) {
+  pointer-events: none !important;
+}
+
+/* More specific targeting for Instagram's play/pause overlays */
+video[controls] + div:not(.insta-control-rotate-menu),
+video[controls] ~ div[role="button"]:not(.insta-control-rotate-menu),
+video[controls] ~ div:not(.insta-control-rotate-menu) > div[role="button"],
+video[controls] ~ button:not(.insta-control-rotate-btn):not(.insta-control-close-btn):not(.insta-control-rotate-menu-item) {
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+/* Target divs that contain SVG icons (Instagram's play button) */
+video[controls] ~ div svg,
+video[controls] + div svg {
+  pointer-events: none !important;
+  opacity: 0 !important;
+  display: none !important;
+}
+
+/* Aggressively hide Instagram's specific control buttons */
+/* Audio Toggle */
+div[role="button"][aria-label="Toggle audio"],
+div[role="button"][aria-label="Audio is muted"],
+button[aria-label="Toggle audio"],
+button[aria-label="Audio is muted"],
+/* Generic "Control" overlays */
+div[role="button"][aria-label="Control"],
+button[aria-label="Control"],
+div[class*="_a61n"], /* Common Instagram Overlay class, risky but effective if stable */
+/* SVGs that look like volume icons */
+svg[aria-label="Toggle audio"],
+svg[aria-label="Audio is muted"] {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+}
+
+/* Ensure video controls are always on top */
+video[controls] {
+  z-index: 10 !important;
+  transform-origin: center center;
+}
+
+/* Fullscreen overlay for rotated videos */
+.insta-control-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.95) !important;
+  z-index: 999999 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+}
+
+/* Video wrapper inside fullscreen overlay - wraps video to separate rotation from controls */
+.insta-control-video-wrapper {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  max-width: 90vw !important;
+  max-height: 85vh !important;
+}
+
+/* Video inside fullscreen overlay */
+.insta-control-overlay video {
+  max-width: 90vw !important;
+  max-height: 85vh !important;
+  width: auto !important;
+  height: auto !important;
+  position: relative !important;
+}
+
+/* Close button for fullscreen overlay - now on LEFT */
+.insta-control-close-btn {
+  position: fixed !important;
+  top: 20px !important;
+  left: 20px !important;
+  z-index: 9999999 !important;
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  border: 2px solid rgba(255, 255, 255, 0.5) !important;
+  font-size: 28px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.insta-control-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  transform: scale(1.1) !important;
+}
+
+/* Rotation button in fullscreen mode - now on RIGHT with menu */
+.insta-control-overlay .insta-control-rotate-btn {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  left: auto !important;
+  z-index: 9999999 !important;
+}
+
+.insta-control-overlay .insta-control-rotate-menu,
+body > .insta-control-rotate-menu.active {
+  position: fixed !important;
+}
+
+.insta-control-overlay .insta-control-rotate-menu {
+  top: 75px !important;
+  right: 20px !important;
+}
+
+/* Helper text for ESC key */
+.insta-control-helper-text {
+  position: fixed !important;
+  bottom: 20px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 14px !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  z-index: 9999999 !important;
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+.insta-control-helper-text kbd {
+  background: rgba(255, 255, 255, 0.1) !important;
+  padding: 2px 6px !important;
+  border-radius: 3px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  font-family: monospace !important;
+  font-size: 12px !important;
+}
+
+/* Custom Video Controls */
+.insta-control-bar {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 48px !important;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8)) !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 12px 0 48px !important; /* Clear tagged accounts button */
+  box-sizing: border-box !important;
+  z-index: 2147483647 !important; /* Max z-index */
+  opacity: 0;
+  transition: opacity 0.3s ease !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  pointer-events: none !important; /* Allow clicks to pass through to tagged users button */
+}
+
+/* Re-enable pointer events for the actual controls */
+.insta-control-bar > * {
+  pointer-events: auto !important;
+}
+
+/* Show controls on hover over the container/overlay */
+.insta-control-enhanced:hover .insta-control-bar,
+.insta-control-overlay:hover .insta-control-bar,
+.insta-control-bar:hover {
+  opacity: 1 !important;
+}
+
+/* Also show when paused */
+.insta-control-bar.paused {
+  opacity: 1 !important;
+}
+
+.insta-control-btn {
+  background: none !important;
+  border: none !important;
+  color: white !important;
+  cursor: pointer !important;
+  width: 32px !important;
+  height: 32px !important;
+  padding: 6px !important;
+  border-radius: 4px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background 0.2s !important;
+  opacity: 0.9 !important;
+}
+
+.insta-control-btn:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  opacity: 1 !important;
+}
+
+.insta-control-btn svg {
+  width: 100% !important;
+  height: 100% !important;
+  fill: currentColor !important;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5)) !important;
+}
+
+.insta-control-time {
+  color: #ddd !important;
+  font-size: 12px !important;
+  margin: 0 10px !important;
+  min-width: 80px !important;
+  text-align: center !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8) !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+.insta-control-progress-container {
+  flex: 1 !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  margin: 0 10px !important;
+  cursor: pointer !important;
+  position: relative !important;
+}
+
+.insta-control-progress-track {
+  width: 100% !important;
+  height: 4px !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 2px !important;
+  position: relative !important;
+  transition: height 0.1s !important;
+}
+
+.insta-control-progress-container:hover .insta-control-progress-track {
+  height: 6px !important;
+}
+
+.insta-control-progress-fill {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  background: #0095f6 !important; /* Instagram blue */
+  border-radius: 2px !important;
+  /* width is set by JS */
+}
+
+.insta-control-progress-handle {
+  display: none !important; /* Always hidden per user request */
+}
+
+/* Volume Slider in a group */
+.insta-control-volume-group {
+  display: flex !important;
+  align-items: center !important;
+  position: relative !important;
+}
+
+.insta-control-volume-slider-container {
+  width: 0 !important;
+  overflow: hidden !important;
+  transition: width 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  margin-left: 5px !important;
+}
+
+.insta-control-volume-group:hover .insta-control-volume-slider-container {
+  width: 60px !important;
+}
+
+.insta-control-volume-track {
+  width: 100% !important;
+  height: 4px !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 2px !important;
+  position: relative !important;
+  cursor: pointer !important;
+}
+
+.insta-control-volume-fill {
+  background: white !important;
+  height: 100% !important;
+  position: absolute !important;
+  left: 0 !important;
+  border-radius: 2px !important;
+}
+
+/* Big Play Button Overlay */
+.insta-control-big-play {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) scale(0.8) !important;
+  width: 64px !important;
+  height: 64px !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 20 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.2s, transform 0.2s !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+.insta-control-big-play svg {
+  width: 32px !important;
+  height: 32px !important;
+  fill: white !important;
+  margin-left: 4px !important;
+}
+
+.insta-control-enhanced.paused .insta-control-big-play {
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
