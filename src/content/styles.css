@@ -1,5 +1,5 @@
-/* Rotation button styling */
-.insta-control-rotate-btn {
+/* Rotation button styling - only visible when extension is active */
+.insta-control-active .insta-control-rotate-btn {
   position: absolute !important;
   top: 10px !important;
   right: 10px !important;
@@ -43,7 +43,7 @@
 }
 
 /* Rotation menu styling */
-.insta-control-rotate-menu {
+.insta-control-active .insta-control-rotate-menu {
   position: absolute !important;
   background: rgba(0, 0, 0, 0.9) !important;
   border-radius: 8px !important;
@@ -136,7 +136,7 @@ body > .insta-control-rotate-menu {
 
 /* Hide all overlay divs that Instagram adds on top of videos */
 /* Target common Instagram overlay patterns */
-.insta-control-enhanced > div:not(.insta-control-rotate-btn):not(.insta-control-rotate-menu):not(video) {
+.insta-control-active .insta-control-enhanced > div:not(.insta-control-rotate-btn):not(.insta-control-rotate-menu):not(video) {
   pointer-events: none !important;
 }
 
@@ -150,26 +150,25 @@ video[controls] ~ button:not(.insta-control-rotate-btn):not(.insta-control-close
 }
 
 /* Target divs that contain SVG icons (Instagram's play button) */
-video[controls] ~ div svg,
-video[controls] + div svg {
+.insta-control-active video[controls] ~ div svg,
+.insta-control-active video[controls] + div svg {
   pointer-events: none !important;
   opacity: 0 !important;
   display: none !important;
 }
 
-/* Aggressively hide Instagram's specific control buttons */
-/* Audio Toggle */
-div[role="button"][aria-label="Toggle audio"],
-div[role="button"][aria-label="Audio is muted"],
-button[aria-label="Toggle audio"],
-button[aria-label="Audio is muted"],
+/* Aggressively hide Instagram's specific control buttons ONLY when active */
+.insta-control-active div[role="button"][aria-label="Toggle audio"],
+.insta-control-active div[role="button"][aria-label="Audio is muted"],
+.insta-control-active button[aria-label="Toggle audio"],
+.insta-control-active button[aria-label="Audio is muted"],
 /* Generic "Control" overlays */
-div[role="button"][aria-label="Control"],
-button[aria-label="Control"],
-div[class*="_a61n"], /* Common Instagram Overlay class, risky but effective if stable */
+.insta-control-active div[role="button"][aria-label="Control"],
+.insta-control-active button[aria-label="Control"],
+.insta-control-active div[class*="_a61n"],
 /* SVGs that look like volume icons */
-svg[aria-label="Toggle audio"],
-svg[aria-label="Audio is muted"] {
+.insta-control-active svg[aria-label="Toggle audio"],
+.insta-control-active svg[aria-label="Audio is muted"] {
     display: none !important;
     opacity: 0 !important;
     pointer-events: none !important;
@@ -177,13 +176,13 @@ svg[aria-label="Audio is muted"] {
 }
 
 /* Ensure video controls are always on top */
-video[controls] {
+.insta-control-active video[controls] {
   z-index: 10 !important;
   transform-origin: center center;
 }
 
 /* Fullscreen overlay for rotated videos */
-.insta-control-overlay {
+.insta-control-active .insta-control-overlay {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
@@ -290,7 +289,7 @@ body > .insta-control-rotate-menu.active {
 }
 
 /* Custom Video Controls */
-.insta-control-bar {
+.insta-control-active .insta-control-bar {
   position: absolute !important;
   bottom: 0 !important;
   left: 0 !important;

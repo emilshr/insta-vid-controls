@@ -1,3 +1,5 @@
+import browser from "webextension-polyfill";
+
 /**
  * Instagram Video Controller
  * Adds HTML5 controls and rotation functionality to Instagram videos
@@ -9,6 +11,8 @@ class InstagramVideoController {
   private rotationStates = new WeakMap<HTMLVideoElement, number>();
   private flipStates = new WeakMap<HTMLVideoElement, boolean>();
   private customControls = new WeakMap<HTMLVideoElement, HTMLElement>();
+  private isEnabled = true;
+
   // Volume Management
   private intendedVolume = new WeakMap<HTMLVideoElement, number>();
   private intendedMuted = new WeakMap<HTMLVideoElement, boolean>();
@@ -17,7 +21,23 @@ class InstagramVideoController {
     this.init();
   }
 
-  private init(): void {
+  private async init(): Promise<void> {
+    // Load initial state
+    const data = await browser.storage.sync.get({ extensionEnabled: true });
+    this.isEnabled = data.extensionEnabled;
+
+    if (this.isEnabled) {
+      document.documentElement.classList.add("insta-control-active");
+    }
+
+    // Watch for dynamic changes from the popup
+    this.setupStorageListener();
+
+    if (!this.isEnabled) {
+      console.log("[InstaControl] Extension is disabled");
+      return;
+    }
+
     // Process existing videos on page load
     this.processExistingVideos();
 
@@ -25,6 +45,75 @@ class InstagramVideoController {
     this.observeVideoAdditions();
 
     console.log("[InstaControl] Initialized");
+  }
+
+  private setupStorageListener(): void {
+    browser.storage.onChanged.addListener((changes) => {
+      if (changes.extensionEnabled) {
+        const newValue = changes.extensionEnabled.newValue;
+        if (newValue === this.isEnabled) return;
+
+        this.isEnabled = newValue;
+        console.log(
+          "[InstaControl] Extension enabled state changed to:",
+          newValue
+        );
+
+        if (this.isEnabled) {
+          document.documentElement.classList.add("insta-control-active");
+          // Re-enable: re-process videos and start observer
+          this.processExistingVideos();
+          this.observeVideoAdditions();
+        } else {
+          document.documentElement.classList.remove("insta-control-active");
+          // Disable: stop observer and remove UI elements
+          if (this.observer) {
+            this.observer.disconnect();
+            this.observer = null;
+          }
+          this.removeAllControls();
+        }
+      }
+    });
+  }
+
+  private removeAllControls(): void {
+    console.log("[InstaControl] Removing all custom controls");
+    const videos = document.querySelectorAll<HTMLVideoElement>("video");
+    videos.forEach((video) => {
+      // Remove custom control bar
+      const bar = this.customControls.get(video);
+      if (bar && bar.parentElement) {
+        bar.parentElement.removeChild(bar);
+      }
+      this.customControls.delete(video);
+
+      // Remove rotation button
+      const container = this.findVideoContainer(video);
+      if (container) {
+        const rotateBtn = container.querySelector(".insta-control-rotate-btn");
+        if (rotateBtn) rotateBtn.parentElement?.removeChild(rotateBtn);
+
+        const rotateMenu = container.querySelector(
+          ".insta-control-rotate-menu"
+        );
+        if (rotateMenu) rotateMenu.parentElement?.removeChild(rotateMenu);
+
+        // Reset video classes and styles
+        container.classList.remove("insta-control-enhanced");
+        container.style.height = "";
+      }
+
+      // Reset video styles
+      video.style.transform = "";
+      video.style.width = "";
+      video.style.height = "";
+      video.style.marginTop = "";
+      video.style.marginLeft = "";
+      video.controls = true; // Restore native controls if they were hidden
+
+      this.processedVideos.delete(video);
+    });
   }
 
   private processExistingVideos(): void {
@@ -63,6 +152,7 @@ class InstagramVideoController {
   }
 
   private enhanceVideo(video: HTMLVideoElement): void {
+    if (!this.isEnabled) return;
     // Prevent double-processing
     if (this.processedVideos.has(video)) return;
 
