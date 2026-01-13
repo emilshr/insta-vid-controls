@@ -132,6 +132,7 @@ h1 {
   font-weight: 700;
   background: var(--grad);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.5px;
 }
@@ -175,6 +176,29 @@ h1 {
   font-size: 13px;
   font-weight: 600;
   color: var(--text-main);
+}
+
+.reload-notice {
+  margin-top: 24px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.reload-notice p {
+  margin: 0 !important;
+  font-size: 11px !important;
+  color: var(--text-dim) !important;
+  line-height: 1.5 !important;
+  text-align: center !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+.reload-notice strong {
+  color: var(--primary);
+  font-weight: 600;
 }
 
 .footer {
